@@ -1,0 +1,11 @@
+{
+  "name": "bidel-online",
+  "version": "1.0.0",
+  "main": "hearts-server.js",
+  "scripts": {
+    "start": "node hearts-server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

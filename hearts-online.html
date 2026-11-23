@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d2818">
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>بیدل آنلاین</title>
+<script async src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--gold:#ffd700;--red:#ff5252}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:radial-gradient(ellipse at 50% 25%,#1c7a45 0%,#0f4a2a 55%,#07241a 100%) fixed;color:#fff;margin:0;padding:10px 10px calc(14px + env(safe-area-inset-bottom));min-height:100vh;user-select:none}
+.wrap{max-width:520px;margin:0 auto;padding-top:env(safe-area-inset-top)}
+header{display:flex;justify-content:center;align-items:center;gap:14px;margin:0 0 8px}
+header h1{margin:0;font-size:26px;color:var(--gold);text-shadow:0 2px 10px #000a;letter-spacing:1px}
+.ss{font-size:24px;opacity:.9}.ss.r{color:var(--red)}
+button{font-family:inherit;border:0;border-radius:12px;padding:10px 18px;font-size:15px;font-weight:bold;background:linear-gradient(#ffe45c,#f2b705);color:#3a2a00;cursor:pointer;margin:3px;box-shadow:0 3px 0 #a67c00,0 6px 10px #0005;transition:transform .1s,box-shadow .1s}
+button:active{transform:translateY(3px);box-shadow:0 0 0 #a67c00,0 2px 4px #0005}
+button:disabled{opacity:.4}button.s{background:rgba(255,255,255,.16);color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.35)}
+.top{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+#score{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.sc{background:linear-gradient(rgba(0,0,0,.4),rgba(0,0,0,.25));border-radius:10px;padding:4px 2px;text-align:center;font-size:12px;border:1px solid rgba(255,255,255,.1)}
+.sc b{display:block;font-size:19px;color:var(--gold)}.sc.on{border-color:var(--gold);box-shadow:0 0 10px rgba(255,215,0,.5)}.sc i{font-style:normal;color:#ff8a80;font-size:11px}
+.felt{border-radius:24px;padding:10px;background:radial-gradient(ellipse at center,#22914f 0%,#167040 55%,#0e5230 100%);border:4px solid #6d4416;box-shadow:inset 0 0 36px #0009,0 0 0 2px #c8a24a,0 10px 24px #000a}
+#tbl{display:grid;grid-template-columns:64px 1fr 64px;gap:6px;align-items:center}
+.bi{background:rgba(0,0,0,.3);border-radius:14px;padding:6px 2px;text-align:center;font-size:12px;border:1px solid rgba(255,255,255,.12)}
+.bi.on{border-color:var(--gold);animation:pulse 1.2s infinite}#b2{grid-column:1/4}
+.av{width:30px;height:30px;border-radius:50%;margin:0 auto 2px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:15px;color:#20230f;border:2px solid #fff8;box-shadow:0 2px 4px #0006}
+.fan{direction:ltr;display:flex;justify-content:center;align-items:center;margin-top:3px}
+.fan i{width:15px;height:21px;border-radius:3px;border:1px solid #fff;background:repeating-linear-gradient(45deg,#c62828 0 3px,#8e1414 3px 6px);margin-left:-8px;box-shadow:-1px 0 2px #0006}
+.fan i:first-child{margin-left:0}.fan em{font-style:normal;margin-left:5px;font-size:11px;opacity:.85}
+#trick{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,56px);justify-items:center;align-items:center;background:radial-gradient(circle,rgba(0,0,0,.22) 0 58%,transparent 60%)}
+.cd{position:relative;width:42px;height:60px;background:linear-gradient(160deg,#fff,#e6eaed);color:#1b1b1b;border-radius:7px;box-shadow:0 2px 5px #0008,inset 0 0 0 1px #cfd8dc;flex:0 0 auto;font-weight:bold;direction:ltr}
+.cd.r{color:#d32f2f}
+.ci{position:absolute;top:3px;left:4px;display:flex;flex-direction:column;align-items:center;font-size:13px;line-height:1}
+.cc{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px;padding:14px 0 0 6px;opacity:.9}
+.cc.f{flex-direction:column;font-size:21px;font-family:Georgia,serif;padding:8px 0 0 6px;line-height:1}.cc.f u{text-decoration:none;font-size:14px}
+.cd.sm{width:36px;height:52px}.sm .ci{font-size:11px}.sm .cc{font-size:21px;padding:11px 0 0 5px}.sm .cc.f{font-size:17px}
+.cd.win{outline:3px solid var(--gold);box-shadow:0 0 16px var(--gold)}
+@keyframes p0{from{transform:translateY(70px) scale(1.25);opacity:0}}@keyframes p1{from{transform:translateX(-70px);opacity:0}}
+@keyframes p2{from{transform:translateY(-70px);opacity:0}}@keyframes p3{from{transform:translateX(70px);opacity:0}}
+@keyframes pulse{50%{box-shadow:0 0 16px var(--gold)}}
+.cd.new.p0{animation:p0 .28s ease-out}.cd.new.p1{animation:p1 .28s ease-out}.cd.new.p2{animation:p2 .28s ease-out}.cd.new.p3{animation:p3 .28s ease-out}
+#hand{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:12px}
+#hand .cd{cursor:pointer;transition:transform .12s,opacity .2s}#hand .cd.ok{transform:translateY(-7px);box-shadow:0 0 0 2px var(--gold),0 6px 10px #0009}
+#hand .cd.dim{opacity:.42}#hand .cd.sel{transform:translateY(-14px);box-shadow:0 0 0 3px #4caf50,0 6px 12px #0009;background:#e8f5e9}
+#msg{display:block;width:fit-content;max-width:100%;min-height:32px;margin:12px auto 0;padding:6px 16px;text-align:center;font-size:14px;color:var(--gold);background:rgba(0,0,0,.35);border:1px solid rgba(255,215,0,.35);border-radius:20px}
+#msg:empty{visibility:hidden}
+.md{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.md>div{background:linear-gradient(160deg,#216b3d,#123d25);border:2px solid var(--gold);border-radius:18px;padding:18px;max-width:380px;width:100%;text-align:center;line-height:1.9;box-shadow:0 12px 40px #000;animation:pop .25s ease-out}
+@keyframes pop{from{transform:scale(.85);opacity:0}}
+table{width:100%;border-collapse:collapse;margin:8px 0}th,td{border:1px solid rgba(255,255,255,.2);padding:5px;font-size:14px}th{color:var(--gold)}
+
+.hide{display:none!important}
+.panel{background:rgba(0,0,0,.32);border:1px solid rgba(255,215,0,.3);border-radius:18px;padding:18px;text-align:center}
+input{font-family:inherit;font-size:16px;color:#fff;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:10px;width:100%;margin:6px 0;text-align:center}
+input:focus{outline:2px solid var(--gold)}
+.seat{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);border-radius:12px;padding:8px 12px;margin:6px 0;text-align:right}
+.seat .av{margin:0}.seat.empty{opacity:.5}.seat small{opacity:.7}
+.sm2{padding:3px 8px;font-size:12px;margin:2px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#000d;border:1px solid var(--gold);padding:8px 16px;border-radius:20px;display:none;z-index:99;font-size:14px;max-width:90%;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><span class="ss">♠</span><h1>بیدل آنلاین</h1><span class="ss r">♥</span></header>
+  <div id="join" class="panel">
+    <div style="margin-bottom:6px">با دوستانت آنلاین بازی کن 🎴</div>
+    <input id="nm" maxlength="14" placeholder="اسم تو">
+    <input id="rm" dir="ltr" maxlength="20" placeholder="کد اتاق (مثلاً friends1)">
+    <button onclick="join()">🚪 ورود به اتاق</button>
+    <div style="font-size:12px;opacity:.7;margin-top:8px">همه با یک «کد اتاق» وارد شوند. اگر کد نبود، اتاق ساخته می‌شود.</div>
+  </div>
+  <div id="lobby" class="panel hide">
+    <div style="color:var(--gold);font-weight:bold;margin-bottom:8px">🏠 اتاق: <span id="lr" dir="ltr"></span></div>
+    <div id="seats"></div>
+    <div style="font-size:12px;opacity:.75;margin:8px 0">صندلی‌های خالی هنگام شروع با ربات پر می‌شوند.</div>
+    <button class="s" onclick="invite()">📨 لینک دعوت</button>
+    <button id="sbtn" onclick="act('start')">▶️ شروع بازی</button>
+    <div id="wait" style="font-size:13px;opacity:.8"></div>
+  </div>
+  <div id="game" class="hide">
+    <div class="top"><div id="score"></div></div>
+    <div class="felt"><div id="tbl"><div class="bi" id="b2"></div><div class="bi" id="b1"></div><div id="trick"></div><div class="bi" id="b3"></div></div></div>
+    <div id="msg"></div>
+    <div style="text-align:center"><button id="pbtn" onclick="doPass()" style="display:none">✅ رد کردن ورق‌ها</button></div>
+    <div id="hand" dir="ltr"></div>
+  </div>
+</div>
+<div class="md" id="md"><div id="mc"></div></div>
+<div id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+const E=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SY=['♣','♦','♠','♥'],RK={11:'J',12:'Q',13:'K',14:'A'},AVC=['#ffd700','#4fc3f7','#f48fb1','#ce93d8'],OFF=[1,3,2];
+const S=id=>id/13|0,R=id=>id%13+2,rk=r=>RK[r]||r;
+const qp=new URLSearchParams(location.search),http=/^https?:/.test(location.protocol);
+const BASE=(qp.get('server')||(http?location.origin:'')).replace(/\/$/,'');
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+function rid(){const a=new Uint8Array(12);crypto.getRandomValues(a);return Array.from(a,x=>x.toString(16).padStart(2,'0')).join('')}
+let pid=ls.get('hearts_pid');if(!pid){pid=rid();ls.set('hearts_pid',pid)}
+let V=null,sel=[],es=null,room='',reconnectTimer=null,reconnectAttempts=0;
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',2600)}
+async function post(p,b){
+  b.pid=pid;const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+  try{const r=await fetch(BASE+p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b),signal:controller.signal});return await r.json()}
+  finally{clearTimeout(timer)}
+}
+const act=(type,x)=>post('/api/act',Object.assign({room,type},x||{})).then(r=>{if(r&&r.error)toast(r.error)}).catch(()=>toast('ارتباط با سرور قطع است'));
+async function join(){const n=$('nm').value.trim().slice(0,14),r=$('rm').value.trim();
+  if(!n){toast('اسمت را بنویس');return}if(!/^[\w-]{3,20}$/.test(r)){toast('کد اتاق: ۳ تا ۲۰ حرف یا عدد انگلیسی');return}
+  try{const x=await post('/api/join',{room:r,name:n});if(x.error){toast(x.error);return}ls.set('hearts_name',n);ls.set('hearts_room',r);room=r;connect()}
+  catch(e){toast('سرور در دسترس نیست')}}
+function scheduleRejoin(){
+  if(reconnectTimer)return;
+  const delay=Math.min(1800*Math.pow(1.7,reconnectAttempts),15000);
+  reconnectTimer=setTimeout(async()=>{
+    reconnectTimer=null;
+    try{
+      const name=ls.get('hearts_name')||$('nm').value.trim();
+      const r=await post('/api/join',{room,name});
+      if(r.error){toast(r.error+'؛ برای ورود دوباره تلاش کن');return}
+      connect();
+    }catch(err){
+      reconnectAttempts++;
+      toast('ارتباط برقرار نشد؛ تلاش دوباره…');
+      scheduleRejoin();
+    }
+  },delay);
+}
+function connect(){
+  if(es){es.onopen=es.onmessage=es.onerror=null;es.close()}
+  es=new EventSource(BASE+'/api/stream?room='+encodeURIComponent(room)+'&pid='+encodeURIComponent(pid));
+  es.onopen=()=>{reconnectAttempts=0;if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null}};
+  es.onmessage=e=>{try{V=JSON.parse(e.data);if(V.phase!=='pass')sel=[];render()}catch(err){toast('داده دریافتی نامعتبر است')}};
+  es.onerror=()=>{
+    toast('ارتباط قطع شد؛ در حال تلاش برای اتصال مجدد…');
+    // EventSource retries ordinary network failures itself. A CLOSED stream
+    // (for example, 404 after a server restart) needs a fresh /api/join first.
+    if(es&&es.readyState===EventSource.CLOSED)scheduleRejoin();
+  };
+}
+function invite(){const u=location.origin+location.pathname+'?room='+encodeURIComponent(room)+(qp.get('server')?'&server='+encodeURIComponent(qp.get('server')):'');
+  const t='بیا بیدل بازی کنیم 🎴\n'+u;if(navigator.share){navigator.share({text:t}).catch(()=>{});return}
+  const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('لینک کپی شد ✅')}catch(e){toast(u)}a.remove()}
+
+const card=(id,cl)=>{const s=S(id),r=R(id);return '<div class="cd '+(s%2?'r':'')+' '+(cl||'')+'" data-i="'+id+'"><div class="ci"><span>'+rk(r)+'</span><span>'+SY[s]+'</span></div>'+
+  (r>10?'<div class="cc f"><b>'+rk(r)+'</b><u>'+SY[s]+'</u></div>':'<div class="cc">'+SY[s]+'</div>')+'</div>'};
+const ch=s=>E(Array.from(s)[0]||'?');
+function render(){if(!V)return;$('join').classList.add('hide');const lob=V.phase==='lobby';
+  $('lobby').classList.toggle('hide',!lob);$('game').classList.toggle('hide',lob);lob?lobby():game()}
+function lobby(){$('lr').textContent=V.room;
+  $('seats').innerHTML=V.names.map((n,i)=>n?'<div class="seat"><div class="av" style="background:'+AVC[i]+'">'+ch(n)+'</div><b>'+E(n)+'</b>'+(i===V.me?' <small>(تو)</small>':'')+(i===V.host?' 👑':'')+(!V.on[i]?' <small>⚠️ آفلاین</small>':'')+'</div>':'<div class="seat empty"><div class="av" style="background:#555">?</div>صندلی خالی (ربات)</div>').join('');
+  const h=V.host===V.me;$('sbtn').style.display=h?'inline-block':'none';$('wait').textContent=h?'':'منتظر شروع بازی توسط میزبان…'}
+function game(){const me=V.me,N=V.names,rel=k=>(me+k)%4,pl=V.phase==='play',L=new Set(V.legal);
+  $('score').innerHTML=[0,1,2,3].map(k=>{const p=rel(k);return '<div class="sc'+(V.turn===p&&pl?' on':'')+'">'+(k?E(N[p]):'تو')+'<b>'+V.tot[p]+'</b><i>'+(V.pts[p]?'♥ '+V.pts[p]:'&nbsp;')+'</i></div>'}).join('');
+  [1,2,3].forEach(k=>{const p=rel(k),el=$('b'+k);el.className='bi'+(V.turn===p&&pl?' on':'');
+    el.innerHTML='<div class="av" style="background:'+AVC[k]+'">'+ch(N[p])+'</div><b>'+E(N[p])+(V.bot[p]?' 🤖':!V.on[p]?' ⚠️':'')+'</b><div class="fan">'+'<i></i>'.repeat(Math.min(V.counts[p],5))+'<em>'+V.counts[p]+'</em></div>'+
+      (V.host===me&&!V.bot[p]&&!V.on[p]&&V.phase!=='over'?'<button class="s sm2" onclick="act(\'bot\',{seat:'+p+'})">🤖 جایگزین</button>':'')});
+  const pos={0:'3/2',1:'2/1',2:'1/2',3:'2/3'};
+  $('trick').innerHTML=V.trick.map((t,i)=>{const k=(t.p-me+4)%4;return '<div style="grid-area:'+pos[k]+'">'+card(t.c,'sm p'+k+(i===V.trick.length-1?' new':'')+(t.p===V.tw?' win':''))+'</div>'}).join('');
+  const pass=V.phase==='pass',mine=pass&&!V.passed[me];
+  $('hand').innerHTML=V.hand.map(c=>card(c,pass?(sel.includes(c)?'sel':''):(pl&&V.turn===me?(L.has(c)?'ok':'dim'):''))).join('');
+  $('pbtn').style.display=mine?'inline-block':'none';$('pbtn').disabled=sel.length!==3;
+  let m='';
+  if(pass)m=mine?'۳ ورق انتخاب کن و به '+N[(me+OFF[V.dir])%4]+' بده ('+sel.length+'/3)':'منتظر بقیه…';
+  else if(pl)m=V.turn===me?(V.trick.length?'نوبت توست':'تو شروع کن'+(V.first?' (دوی گل)':'')):V.turn>=0?N[V.turn]+' بازی می‌کند…':'';
+  $('msg').textContent=m;overlay()}
+function overlay(){const sm=V.sum,show=(V.phase==='sum'||V.phase==='over')&&sm;
+  if(!show){$('md').style.display='none';return}
+  const N=V.names,hostMe=V.host===V.me;
+  let h='<b style="color:var(--gold);font-size:18px">'+(sm.moon>=0?'🌙 '+E(N[sm.moon])+' Moon زد!':'پایان دست '+V.handNo)+'</b><table><tr><th></th><th>این دست</th><th>جمع</th></tr>'+
+    N.map((n,i)=>'<tr><td>'+E(n)+'</td><td>'+sm.pts[i]+'</td><td><b>'+sm.tot[i]+'</b></td></tr>').join('')+'</table>';
+  if(V.phase==='over')h+='<div style="font-size:18px">🏁 برنده: <b style="color:var(--gold)">'+E(N[sm.win])+'</b> ('+sm.tot[sm.win]+')<br>💔 آخر: '+E(N[sm.tot.indexOf(Math.max(...sm.tot))])+'</div>';
+  else if(sm.tie)h+='<div>⚖️ مساوی برای اول — یک دست دیگر</div>';
+  const t=V.phase==='over'?'newgame':'next';
+  h+=hostMe?'<button onclick="act(\''+t+'\')">'+(V.phase==='over'?'🎮 بازی جدید':'▶️ دست بعدی')+'</button>':'<div style="opacity:.8;font-size:13px">منتظر میزبان…</div>';
+  $('mc').innerHTML=h;$('md').style.display='flex'}
+function doPass(){if(sel.length===3)act('pass',{ids:sel.slice()})}
+$('hand').onclick=e=>{const d=e.target.closest('.cd');if(!d||!V)return;const id=+d.dataset.i;
+  if(V.phase==='pass'&&!V.passed[V.me]){const i=sel.indexOf(id);if(i>=0)sel.splice(i,1);else if(sel.length<3)sel.push(id);render()}
+  else if(V.phase==='play'&&V.turn===V.me&&V.legal.includes(id))act('play',{id})};
+$('nm').value=ls.get('hearts_name')||'';$('rm').value=qp.get('room')||ls.get('hearts_room')||'';
+window.addEventListener('load',()=>{const t=window.Telegram&&Telegram.WebApp;if(t){t.ready();t.expand();const u=t.initDataUnsafe;
+  if(u&&u.user&&!$('nm').value)$('nm').value=u.user.first_name||'';if(u&&u.start_param&&!qp.get('room'))$('rm').value=u.start_param}
+  if(http&&navigator.serviceWorker)navigator.serviceWorker.register('/sw.js').catch(()=>toast('نصب آفلاین در این مرورگر فعال نشد'));
+  if($('nm').value&&$('rm').value&&qp.get('room'))join()});
+</script>
+</body>
+</html>
