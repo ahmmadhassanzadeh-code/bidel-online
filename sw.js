@@ -1,6 +1,6 @@
 /* Bidel PWA shell cache. Game API and live SSE are never cached. */
-const CACHE_NAME = 'bidel-shell-v2';
-const APP_SHELL = ['/', '/index.html', '/manifest.json', '/icon.svg'];
+const CACHE_NAME = 'bidel-shell-v4';
+const APP_SHELL = ['/', '/index.html', '/scorekeeper.html', '/manifest.json', '/icon.svg'];
 
 self.addEventListener('install', event => {
   event.waitUntil(

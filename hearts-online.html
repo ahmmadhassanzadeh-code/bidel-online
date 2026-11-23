@@ -58,6 +58,12 @@ table{width:100%;border-collapse:collapse;margin:8px 0}th,td{border:1px solid rg
 .panel{background:rgba(0,0,0,.32);border:1px solid rgba(255,215,0,.3);border-radius:18px;padding:18px;text-align:center}
 input{font-family:inherit;font-size:16px;color:#fff;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:10px;width:100%;margin:6px 0;text-align:center}
 input:focus{outline:2px solid var(--gold)}
+
+.room-head{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding-top:12px;border-top:1px solid rgba(255,215,0,.25);color:var(--gold)}
+.room-list{margin-top:8px}.room-empty{font-size:13px;opacity:.7;padding:12px 6px}
+.room-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px 10px;margin:7px 0}
+.room-info{text-align:right;min-width:0}.room-code{font-weight:bold;direction:ltr;unicode-bidi:plaintext;font-size:14px}
+.room-count{font-size:11px;opacity:.75;margin-top:3px}.room-row button{margin:0;padding:7px 12px;font-size:13px;white-space:nowrap}
 .seat{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);border-radius:12px;padding:8px 12px;margin:6px 0;text-align:right}
 .seat .av{margin:0}.seat.empty{opacity:.5}.seat small{opacity:.7}
 .sm2{padding:3px 8px;font-size:12px;margin:2px}
@@ -67,19 +73,30 @@ input:focus{outline:2px solid var(--gold)}
 <body>
 <div class="wrap">
   <header><span class="ss">♠</span><h1>بیدل آنلاین</h1><span class="ss r">♥</span></header>
+  <div id="homeMenu" class="panel">
+    <div style="font-size:17px;color:var(--gold);font-weight:bold;margin-bottom:14px">به بیدل خوش آمدی ♥</div>
+    <button onclick="showPage('online')">🎴 بازی آنلاین</button>
+    <button onclick="showPage('online');$('rm').value='';$('rm').focus()">🤖 ساخت اتاق و شروع با ربات‌ها</button>
+    <button onclick="showPage('real')">📝 امتیازشماری با پاسور واقعی</button>
+    <button class="s" onclick="showPage('stats');loadGlobalStats()">🏆 آمار و امتیازات کلی</button>
+  </div>
+  <div id="onlinePage" class="hide">
+  <button class="s sm2" onclick="showPage('home')">⬅️ صفحه اصلی</button>
   <div id="join" class="panel">
     <div style="margin-bottom:6px">با دوستانت آنلاین بازی کن 🎴</div>
     <input id="nm" maxlength="14" placeholder="اسم تو">
     <input id="rm" dir="ltr" maxlength="20" placeholder="کد اتاق (مثلاً friends1)">
-    <button onclick="join()">🚪 ورود به اتاق</button>
-    <div style="font-size:12px;opacity:.7;margin-top:8px">همه با یک «کد اتاق» وارد شوند. اگر کد نبود، اتاق ساخته می‌شود.</div>
+    <button onclick="join()">🚪 ورود به اتاق / ساخت اتاق</button>
+    <div style="font-size:12px;opacity:.7;margin-top:8px">برای ساخت اتاق، یک کد دلخواه وارد کن؛ یا از فهرست زیر وارد اتاق‌های باز شو.</div>
+    <div class="room-head"><b>🏠 اتاق‌های باز</b><button class="s sm2" onclick="loadRooms()">🔄 تازه‌سازی</button></div>
+    <div id="roomList" class="room-list"><div class="room-empty">در حال دریافت فهرست اتاق‌ها…</div></div>
   </div>
   <div id="lobby" class="panel hide">
     <div style="color:var(--gold);font-weight:bold;margin-bottom:8px">🏠 اتاق: <span id="lr" dir="ltr"></span></div>
     <div id="seats"></div>
-    <div style="font-size:12px;opacity:.75;margin:8px 0">صندلی‌های خالی هنگام شروع با ربات پر می‌شوند.</div>
+    <div style="font-size:12px;opacity:.75;margin:8px 0">برای شروع با دوستان، هر چهار صندلی را پر کنید؛ یا شروع فوری با ربات‌ها را بزنید.</div>
     <button class="s" onclick="invite()">📨 لینک دعوت</button>
-    <button id="sbtn" onclick="act('start')">▶️ شروع بازی</button>
+    <button id="sbtn" onclick="act('start')">▶️ شروع با ۴ بازیکن</button><button id="botStart" onclick="act('startBots')">🤖 شروع فوری با ربات‌ها</button>
     <div id="wait" style="font-size:13px;opacity:.8"></div>
   </div>
   <div id="game" class="hide">
@@ -88,7 +105,12 @@ input:focus{outline:2px solid var(--gold)}
     <div id="msg"></div>
     <div style="text-align:center"><button id="pbtn" onclick="doPass()" style="display:none">✅ رد کردن ورق‌ها</button></div>
     <div id="hand" dir="ltr"></div>
+    <div id="endActions" class="panel" style="margin-top:12px;padding:10px"></div>
+    <button class="s sm2" onclick="showPage('home')">🏠 صفحه اصلی</button>
   </div>
+  </div>
+  <div id="realPage" class="hide"><button class="s sm2" onclick="showPage('home')">⬅️ صفحه اصلی</button><iframe src="/scorekeeper.html" title="امتیازشماری پاسور واقعی" style="width:100%;height:calc(100vh - 80px);border:0;border-radius:14px;background:#0d2818"></iframe></div>
+  <div id="statsPage" class="panel hide"><button class="s sm2" onclick="showPage('home')">⬅️ صفحه اصلی</button><h3 style="color:var(--gold)">🏆 آمار و امتیازات کلی</h3><div id="globalStats">در حال دریافت آمار…</div><button onclick="loadGlobalStats()">🔄 تازه‌سازی</button></div>
 </div>
 <div class="md" id="md"><div id="mc"></div></div>
 <div id="toast"></div>
@@ -103,13 +125,25 @@ const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k
 function rid(){const a=new Uint8Array(12);crypto.getRandomValues(a);return Array.from(a,x=>x.toString(16).padStart(2,'0')).join('')}
 let pid=ls.get('hearts_pid');if(!pid){pid=rid();ls.set('hearts_pid',pid)}
 let V=null,sel=[],es=null,room='',reconnectTimer=null,reconnectAttempts=0;
+function showPage(p){$('md').style.display='none';['homeMenu','onlinePage','realPage','statsPage'].forEach((id,i)=>$(id).classList.toggle('hide',!(['home','online','real','stats'][i]===p)));if(p==='online'){loadRooms();$('join').classList.remove('hide');$('lobby').classList.add('hide');$('game').classList.add('hide');if(V)render()}}
 function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',2600)}
 async function post(p,b){
   b.pid=pid;const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
   try{const r=await fetch(BASE+p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b),signal:controller.signal});return await r.json()}
   finally{clearTimeout(timer)}
 }
-const act=(type,x)=>post('/api/act',Object.assign({room,type},x||{})).then(r=>{if(r&&r.error)toast(r.error)}).catch(()=>toast('ارتباط با سرور قطع است'));
+const act=(type,x)=>post('/api/act',Object.assign({room,type},x||{})).then(r=>{if(r&&r.error)toast(r.error);else if(r&&r.rejected)toast('درخواست پایان رد شد؛ بازی ادامه دارد.')}).catch(()=>toast('ارتباط با سرور قطع است'));
+async function loadRooms(){
+  const box=$('roomList');if(!box)return;
+  try{
+    const response=await fetch(BASE+'/api/rooms',{cache:'no-store'});
+    if(!response.ok)throw new Error('rooms');
+    const data=await response.json(),list=data.rooms||[];
+    if(!list.length){box.innerHTML='<div class="room-empty">فعلاً اتاق بازیِ بازی وجود ندارد؛ می‌توانی خودت یک اتاق بسازی.</div>';return}
+    box.innerHTML=list.map(x=>'<div class="room-row"><div class="room-info"><div class="room-code">'+E(x.code)+'</div><div class="room-count">👥 '+x.players+' نفر از ۴ نفر · جای خالی دارد</div></div><button onclick="enterListedRoom(\''+E(x.code)+'\')">ورود</button></div>').join('');
+  }catch(e){box.innerHTML='<div class="room-empty">دریافت فهرست اتاق‌ها ممکن نشد؛ دوباره تازه‌سازی کن.</div>'}
+}
+function enterListedRoom(code){$('rm').value=code;join()}
 async function join(){const n=$('nm').value.trim().slice(0,14),r=$('rm').value.trim();
   if(!n){toast('اسمت را بنویس');return}if(!/^[\w-]{3,20}$/.test(r)){toast('کد اتاق: ۳ تا ۲۰ حرف یا عدد انگلیسی');return}
   try{const x=await post('/api/join',{room:r,name:n});if(x.error){toast(x.error);return}ls.set('hearts_name',n);ls.set('hearts_room',r);room=r;connect()}
@@ -154,7 +188,7 @@ function render(){if(!V)return;$('join').classList.add('hide');const lob=V.phase
   $('lobby').classList.toggle('hide',!lob);$('game').classList.toggle('hide',lob);lob?lobby():game()}
 function lobby(){$('lr').textContent=V.room;
   $('seats').innerHTML=V.names.map((n,i)=>n?'<div class="seat"><div class="av" style="background:'+AVC[i]+'">'+ch(n)+'</div><b>'+E(n)+'</b>'+(i===V.me?' <small>(تو)</small>':'')+(i===V.host?' 👑':'')+(!V.on[i]?' <small>⚠️ آفلاین</small>':'')+'</div>':'<div class="seat empty"><div class="av" style="background:#555">?</div>صندلی خالی (ربات)</div>').join('');
-  const h=V.host===V.me;$('sbtn').style.display=h?'inline-block':'none';$('wait').textContent=h?'':'منتظر شروع بازی توسط میزبان…'}
+  const h=V.host===V.me;$('sbtn').style.display=h?'inline-block':'none';$('botStart').style.display=h?'inline-block':'none';$('wait').textContent=h?'می‌توانی منتظر بازیکنان بمانی یا همین حالا با ربات‌ها شروع کنی.':'منتظر شروع بازی توسط میزبان…'}
 function game(){const me=V.me,N=V.names,rel=k=>(me+k)%4,pl=V.phase==='play',L=new Set(V.legal);
   $('score').innerHTML=[0,1,2,3].map(k=>{const p=rel(k);return '<div class="sc'+(V.turn===p&&pl?' on':'')+'">'+(k?E(N[p]):'تو')+'<b>'+V.tot[p]+'</b><i>'+(V.pts[p]?'♥ '+V.pts[p]:'&nbsp;')+'</i></div>'}).join('');
   [1,2,3].forEach(k=>{const p=rel(k),el=$('b'+k);el.className='bi'+(V.turn===p&&pl?' on':'');
@@ -168,8 +202,9 @@ function game(){const me=V.me,N=V.names,rel=k=>(me+k)%4,pl=V.phase==='play',L=ne
   let m='';
   if(pass)m=mine?'۳ ورق انتخاب کن و به '+N[(me+OFF[V.dir])%4]+' بده ('+sel.length+'/3)':'منتظر بقیه…';
   else if(pl)m=V.turn===me?(V.trick.length?'نوبت توست':'تو شروع کن'+(V.first?' (دوی گل)':'')):V.turn>=0?N[V.turn]+' بازی می‌کند…':'';
-  $('msg').textContent=m;overlay()}
-function overlay(){const sm=V.sum,show=(V.phase==='sum'||V.phase==='over')&&sm;
+  $('msg').textContent=m;drawEndActions();overlay()}
+function drawEndActions(){const el=$('endActions');if(!el||!V)return;let h='';if(V.phase==='agreed')h='<b style="color:var(--gold)">🤝 بازی با توافق همه پایان یافت؛ این نتیجه برد یا باخت محسوب نمی‌شود.</b>';else if(V.phase==='over')h='<span style="opacity:.8">بازی به پایان رسیده است.</span>';else if(V.phase==='lobby')h='';else if(!V.endReq)h='<button class="s" onclick="act(\'requestEnd\')">🤝 درخواست پایان توافقی بازی</button>';else if(V.endReq.by===V.me)h='<div>درخواست پایان بازی ارسال شد؛ منتظر رأی سه بازیکن دیگر…</div><button class="s sm2" onclick="act(\'cancelEnd\')">لغو درخواست</button>';else if(V.endReq.votes[V.me]===null)h='<div>یکی از بازیکنان درخواست پایان بازی داده است. موافقی؟</div><button onclick="act(\'voteEnd\',{approve:true})">✅ موافقم</button><button class="s" onclick="act(\'voteEnd\',{approve:false})">❌ مخالفم</button>';else h='<div>درخواست پایان در حال بررسی است؛ منتظر رأی بقیه…</div>';el.innerHTML=h}
+function overlay(){const sm=V.sum,show=(V.phase==='sum'||V.phase==='over')&&sm;if(V.phase==='agreed'){$('mc').innerHTML='<b style="color:var(--gold);font-size:18px">🤝 بازی با توافق همه پایان یافت</b><p>این پایان توافقی است؛ برنده، بازنده و امتیاز برد/باختی ثبت نمی‌شود.</p><button onclick="showPage(\'home\')">🏠 صفحه اصلی</button>';$('md').style.display='flex';return}
   if(!show){$('md').style.display='none';return}
   const N=V.names,hostMe=V.host===V.me;
   let h='<b style="color:var(--gold);font-size:18px">'+(sm.moon>=0?'🌙 '+E(N[sm.moon])+' Moon زد!':'پایان دست '+V.handNo)+'</b><table><tr><th></th><th>این دست</th><th>جمع</th></tr>'+
@@ -179,15 +214,16 @@ function overlay(){const sm=V.sum,show=(V.phase==='sum'||V.phase==='over')&&sm;
   const t=V.phase==='over'?'newgame':'next';
   h+=hostMe?'<button onclick="act(\''+t+'\')">'+(V.phase==='over'?'🎮 بازی جدید':'▶️ دست بعدی')+'</button>':'<div style="opacity:.8;font-size:13px">منتظر میزبان…</div>';
   $('mc').innerHTML=h;$('md').style.display='flex'}
+async function loadGlobalStats(){const box=$('globalStats');if(!box)return;box.textContent='در حال دریافت…';try{const r=await fetch(BASE+'/api/stats',{cache:'no-store'});if(!r.ok)throw 0;const d=await r.json(),rows=Object.entries(d.players||{}).sort((a,b)=>b[1].wins-a[1].wins);box.innerHTML=rows.length?'<table><tr><th>بازیکن</th><th>بازی</th><th>🏆 برد</th><th>💔 باخت</th><th>🌙 Moon</th><th>آنلاین</th><th>واقعی</th></tr>'+rows.map(([n,x])=>'<tr><td>'+E(n)+'</td><td>'+x.games+'</td><td>'+x.wins+'</td><td>'+x.losses+'</td><td>'+x.moons+'</td><td>'+(x.online?.wins||0)+' / '+(x.online?.losses||0)+'</td><td>'+(x.real?.wins||0)+' / '+(x.real?.losses||0)+'</td></tr>').join('')+'</table>':'هنوز نتیجه‌ای ثبت نشده است.'}catch(e){box.textContent='دریافت آمار از سرور ممکن نشد.'}}
 function doPass(){if(sel.length===3)act('pass',{ids:sel.slice()})}
 $('hand').onclick=e=>{const d=e.target.closest('.cd');if(!d||!V)return;const id=+d.dataset.i;
   if(V.phase==='pass'&&!V.passed[V.me]){const i=sel.indexOf(id);if(i>=0)sel.splice(i,1);else if(sel.length<3)sel.push(id);render()}
   else if(V.phase==='play'&&V.turn===V.me&&V.legal.includes(id))act('play',{id})};
 $('nm').value=ls.get('hearts_name')||'';$('rm').value=qp.get('room')||ls.get('hearts_room')||'';
-window.addEventListener('load',()=>{const t=window.Telegram&&Telegram.WebApp;if(t){t.ready();t.expand();const u=t.initDataUnsafe;
+window.addEventListener('load',()=>{loadRooms();setInterval(()=>{if(!document.hidden&&!V)loadRooms()},10000);const t=window.Telegram&&Telegram.WebApp;if(t){t.ready();t.expand();const u=t.initDataUnsafe;
   if(u&&u.user&&!$('nm').value)$('nm').value=u.user.first_name||'';if(u&&u.start_param&&!qp.get('room'))$('rm').value=u.start_param}
   if(http&&navigator.serviceWorker)navigator.serviceWorker.register('/sw.js').catch(()=>toast('نصب آفلاین در این مرورگر فعال نشد'));
-  if($('nm').value&&$('rm').value&&qp.get('room'))join()});
+  if($('nm').value&&$('rm').value&&qp.get('room')){showPage('online');join()}});
 </script>
 </body>
 </html>
